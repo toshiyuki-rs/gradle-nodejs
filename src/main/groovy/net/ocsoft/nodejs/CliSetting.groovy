@@ -12,6 +12,11 @@ public class CliSetting {
     private String name
 
     /**
+     * repository
+     */
+    public String repository
+
+    /**
      * command line argument
      */
     private List<String> args
@@ -52,6 +57,7 @@ public class CliSetting {
         } 
         return this
     }
+
 }
 
 // vi: se ts=4 sw=4 et:

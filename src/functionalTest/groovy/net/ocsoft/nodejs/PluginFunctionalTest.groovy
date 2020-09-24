@@ -43,13 +43,14 @@ public class PluginFunctionalTest extends Specification {
     }
     nodejsSettings {
         installNodeModules = true
-    }
-    nodejsCliSettings {
-        nodeCli_less_lessc_1 {
-            args = ['--no-color', "${projectDir}/src/index.less",
-                "${buildDir}/index.css"]
+        cliSettings {
+            nodeCli_less_lessc_1 {
+                args = ['--no-color', "${projectDir}/src/index.less",
+                    "${buildDir}/index.css"]
+            }
         }
     }
+
     task lessc {
         dependsOn nodeCli_less_lessc_1
     }

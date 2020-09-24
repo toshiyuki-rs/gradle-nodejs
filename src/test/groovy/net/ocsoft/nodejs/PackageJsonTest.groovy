@@ -14,7 +14,6 @@ public class PackageJsonTest extends Specification {
           
         def project = ProjectBuilder.builder().withProjectDir(
             projectDir).build()
-        println projectDir
         PackageJson.installIfNot(project) 
         then:
         packFile.exists() 

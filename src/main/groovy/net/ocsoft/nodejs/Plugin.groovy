@@ -14,26 +14,26 @@ public class Plugin implements org.gradle.api.Plugin<Project> {
 
     private final static String CLI_PREFIX = "nodeCli"
     public void apply(Project project) {
-        def settings = new Settings()
+        def settings = new Settings(project.objects)
         project.extensions.add("nodejsSettings", settings)
-        def cliSettings = project.container(CliSetting.class,
-            new NamedDomainObjectFactory<CliSetting>() {
-                public CliSetting create(String name) {
-                    return new CliSetting(name)
-                }
-            })
-        project.extensions.add("nodejsCliSettings", cliSettings)
          
         project.tasks.addRule(
-            "${CLI_PREFIX}_<Module>_<Command>_<Id> Run node cli") {
+            "${CLI_PREFIX}_<Module>_<Command>_<Id> Run node cli",
+            createCliRuleHandler(project))
+    }
+
+    /**
+     * cli rule handler
+     */
+    Closure createCliRuleHandler(Project project) {
+        return {
             def prefix = "${CLI_PREFIX}_"
             def pos = it.indexOf(CLI_PREFIX) 
             def taskName = it
             if (pos == 0) {
                 def moduleCommandName = it.substring(prefix.length()) 
                 def elems  = moduleCommandName.split("_")
-
-                def moduleCommand
+                String[] moduleCommand
                 if (elems.length > 1) {
                     moduleCommand = [
                         elems[0],
@@ -45,17 +45,9 @@ public class Plugin implements org.gradle.api.Plugin<Project> {
                         elems[0]
                     ]
                 }
-
                 def task = project.tasks.findByPath(taskName) 
                 if (task == null) {
-                    def exec = CliTask.resolveExec(
-                        moduleCommand[0], moduleCommand[1], 
-                        project)
-                    if (exec != null) {
-                        project.tasks.create(taskName, CliTask) {
-                            executable = exec
-                        } 
-                    }
+                    CliTask.registerTask(project, moduleCommand, taskName)
                 }
             }
         }

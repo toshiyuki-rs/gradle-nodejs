@@ -42,11 +42,20 @@ public class NodeModules {
         }
         return result
     }
-
+    /**
+     * install node_module or package.json
+     */
+    static File installIfNot(Project project) {
+        def setting = project.extensions.findByType(Settings.class)
+        def dir = setting.moduleDirectory
+        def result = installIfNot(project, dir)
+        return result
+    }
+ 
     /**
      * install node_modules
      */
-    static void installIfNot(Project project, File moduleParent) {
+    static File installIfNot(Project project, File moduleParent) {
              
         def nodeModules
         if (moduleParent != null) {
@@ -54,10 +63,18 @@ public class NodeModules {
         } else {
             nodeModules = new File(project.projectDir, "node_modules") 
         }
+        File result = null
         if (!nodeModules.exists()) {
-            PackageJson.installIfNot(project, moduleParent)
+            def jsonPath = PackageJson.installIfNot(project, moduleParent)
+            if (jsonPath != null) {
+                result = jsonPath.parentFile
+            } 
+        } else {
+            if (nodeModules.directory) {
+                result = nodeModules.parentFile
+            }
         }
-         
+        return result 
     }
 }
 

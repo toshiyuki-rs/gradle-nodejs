@@ -16,13 +16,35 @@ class CliTask extends AbstractExecTask<CliTask> {
 
         def result = CliResolver.resolve(cmd, project) 
         if (result == null) {
-            def setting = project.extensions.findByType(Settings.class)
-            if (setting.installNodeModules) {
-                def dir = setting.moduleDirectory
-                NodeModules.installIfNot(project, dir)
-                Npm.install(project, module, dir) 
-                result = CliResolver.resolve(cmd, project)
-            }
+            def moduleParent = NodeModules.installIfNot(project)
+            def status = Npm.install(project, module, moduleParent) 
+            result = CliResolver.resolve(cmd, project)
+        }
+        return result
+    }
+
+    /**
+     * register task
+     */
+    static boolean registerTask(Project project,
+        String[] moduleCommand,  String taskName) {
+        def rootSettings = project.extensions.findByType(Settings.class)
+        def cliSetting = rootSettings.findCliSetting(taskName)
+        def moduleName
+        if (cliSetting != null && cliSetting.repository != null) {
+            moduleName = cliSetting.reposity 
+        } else {
+            moduleName = moduleCommand[0]
+        }
+        def exec = resolveExec(
+            moduleName, moduleCommand[1], 
+            project)
+        def result = false
+        if (exec != null) {
+            project.tasks.create(taskName, CliTask) {
+                executable = exec
+            } 
+            result = true
         }
         return result
     }
@@ -35,10 +57,10 @@ class CliTask extends AbstractExecTask<CliTask> {
     } 
 
     void setupArgs() {
-        def settings = project.extensions.findByName('nodejsCliSettings') 
-        
-        def cliSettings = settings.findByName(name) 
-        if (cliSettings != null
+        def settings = project.extensions.findByType(Settings.class)
+        def cliSettings = settings.cliSettings  
+        def cliSetting = cliSettings.findByName(name) 
+        if (cliSetting != null
             && cliSettings.args != null) {
             args = cliSettings.args
         }
