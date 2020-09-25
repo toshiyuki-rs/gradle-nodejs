@@ -24,6 +24,37 @@ class CliTask extends AbstractExecTask<CliTask> {
     }
 
     /**
+     * register task if the name task is not exists.
+     */
+    static boolean registerTaskIfNot(Project project, String taskName) {
+        def prefix = "${Constants.CLI_PREFIX}_"
+        def pos = taskName.indexOf(Constants.CLI_PREFIX) 
+        
+        def result = false
+        if (pos == 0) {
+            def moduleCommandName = taskName.substring(prefix.length()) 
+            def elems  = moduleCommandName.split("_")
+            String[] moduleCommand
+            if (elems.length > 1) {
+                moduleCommand = [
+                    elems[0],
+                    elems[1]
+                ]
+            } else {
+                moduleCommand = [
+                    elems[0], 
+                    elems[0]
+                ]
+            }
+            def task = project.tasks.findByPath(taskName) 
+            if (task == null) {
+                result = registerTask(project, moduleCommand, taskName)
+            }
+        } 
+        return result
+    }
+
+    /**
      * register task
      */
     static boolean registerTask(Project project,

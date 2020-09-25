@@ -12,14 +12,15 @@ import org.gradle.api.NamedDomainObjectFactory
  */
 public class Plugin implements org.gradle.api.Plugin<Project> {
 
-    private final static String CLI_PREFIX = "nodeCli"
     public void apply(Project project) {
         def settings = new Settings(project.objects)
         project.extensions.add("nodejsSettings", settings)
-         
         project.tasks.addRule(
-            "${CLI_PREFIX}_<Module>_<Command>_<Id> Run node cli",
+            "${Constants.CLI_PREFIX}_<Module>_<Command>_<Id> Run node cli",
             createCliRuleHandler(project))
+        project.tasks.addRule(
+            "${Constants.NODE_PREFIX}_<Id> Run node command",
+            createNodeRuleHandler(project))
     }
 
     /**
@@ -27,30 +28,18 @@ public class Plugin implements org.gradle.api.Plugin<Project> {
      */
     Closure createCliRuleHandler(Project project) {
         return {
-            def prefix = "${CLI_PREFIX}_"
-            def pos = it.indexOf(CLI_PREFIX) 
-            def taskName = it
-            if (pos == 0) {
-                def moduleCommandName = it.substring(prefix.length()) 
-                def elems  = moduleCommandName.split("_")
-                String[] moduleCommand
-                if (elems.length > 1) {
-                    moduleCommand = [
-                        elems[0],
-                        elems[1]
-                    ]
-                } else {
-                    moduleCommand = [
-                        elems[0], 
-                        elems[0]
-                    ]
-                }
-                def task = project.tasks.findByPath(taskName) 
-                if (task == null) {
-                    CliTask.registerTask(project, moduleCommand, taskName)
-                }
-            }
+            CliTask.registerTaskIfNot(project, it)
+        }
+    }
+
+    /**
+     * node rule handler
+     */
+    Closure createNodeRuleHandler(Project project) {
+        return {
+            NodeTask.registerTaskIfNot(project, it)
         }
     }
 }
+
 // vi: se ts=4 sw=4 et:

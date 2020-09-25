@@ -4,7 +4,7 @@ package net.ocsoft.nodejs
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.model.ObjectFactory
 
-public class CliSetting {
+public class CommandSetting {
     
     /**
      * name
@@ -19,15 +19,15 @@ public class CliSetting {
     /**
      * command line argument
      */
-    private List<String> args
+    // private List<String> args
 
 
     /**
      * constructor
      */
-    CliSetting(String name) {
+    CommandSetting(String name) {
         this.name = name
-        this.args = new ArrayList<String>()
+        // this.args = new ArrayList<String>()
     }
 
     /**
@@ -37,27 +37,43 @@ public class CliSetting {
         return name
     }
 
+    /**
+     * get argments for command 
+     */
+/*
     public List<String> getArgs() {
         return this.args
     }
-
+*/
+    /**
+     * set argments for command
+     */
+/*
     public void setArgs(Collection<String> args) {
         this.args.clear()
         this.args.addAll(args) 
     }
-
+*/
+    /**
+     * adds arguments for command
+     */
+/*
     public args(String... args) {
         this.args.addAll(this.args.size(), args)
         return this 
     }
-    public args(Iterable<?> args) {
+*/
+    /**
+     * adds argumets for command
+     */
+/*    public args(Iterable<?> args) {
         def thisArgs = this.args
         args.forEach {
             thisArgs.add it
         } 
         return this
     }
-
+*/
 }
 
 // vi: se ts=4 sw=4 et:

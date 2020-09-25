@@ -25,20 +25,43 @@ class Settings {
     /**
      * cli settings
      */
-    NamedDomainObjectContainer<CliSetting> cliSettings
+    NamedDomainObjectContainer<CommandSetting> cliSettings
     
+    /**
+     * node settings
+     */
+    NamedDomainObjectContainer<NodeSetting> nodeSettings
+    
+
 
     /**
      * constructor
      */
     Settings(ObjectFactory objectFactory) {
-        cliSettings = objectFactory.domainObjectContainer(CliSetting.class)
+        cliSettings = objectFactory.domainObjectContainer(CommandSetting.class)
+        nodeSettings = objectFactory.domainObjectContainer(NodeSetting.class)
+        setupCliSettings()
+        setupNodeSettings()
+    }
+
+    void setupCliSettings() {
+        cliSettings.all {
+            def taskName = it.name
+            CliTask.registerTaskIfNot(project, taskName) 
+        }
+    } 
+    
+    void setupNodeSettings() {
+        nodeSettings.all {
+            NodeTask.registerIfNot(project, it.name)
+        } 
+        
     }
 
     /**
      * cli setting
      */
-    NamedDomainObjectContainer<CliSetting> cliSettings(Closure closure) {
+    NamedDomainObjectContainer<CommandSetting> cliSettings(Closure closure) {
         def savedDelegate = closure.delegate
         closure.delegate = this.cliSettings
         closure()
@@ -49,8 +72,26 @@ class Settings {
     /**
      * cli setting
      */
-    CliSetting findCliSetting(String name) {
+    CommandSetting findCliSetting(String name) {
         return this.cliSettings.findByName(name)
+    }
+
+    /**
+     * node setting
+     */
+    NamedDomainObjectContainer<NodeSetting> nodeSettings(Closure closure) {
+        def savedDelegate = closure.delegate
+        closure.delegate = this.nodeSettings
+        closure()
+        closure.delegate = savedDelegate
+        return nodeSettings
+    }
+
+    /**
+     * node setting
+     */
+    NodeSetting findNodeSetting(String name) {
+        return this.nodeSettings.findByName(name)
     }
 }
 
