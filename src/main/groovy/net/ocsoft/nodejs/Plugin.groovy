@@ -13,7 +13,7 @@ import org.gradle.api.NamedDomainObjectFactory
 public class Plugin implements org.gradle.api.Plugin<Project> {
 
     public void apply(Project project) {
-        def settings = new Settings(project.objects)
+        def settings = new Settings()
         project.extensions.add("nodejsSettings", settings)
         project.tasks.addRule(
             "${Constants.CLI_PREFIX}_<Module>_<Command>_<Id> Run node cli",

@@ -11,7 +11,7 @@ public class CliTaskTest extends Specification {
         when:
         def project = ProjectBuilder.builder().withProjectDir(
             projectDir).build()
-        project.extensions.add('nodejsSettings', new Settings(project.objects)) 
+        project.extensions.add('nodejsSettings', new Settings()) 
         project.extensions.configure('nodejsSettings') {
             it.installNodeModules = true
         }

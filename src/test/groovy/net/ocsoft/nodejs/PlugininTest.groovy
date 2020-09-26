@@ -20,7 +20,6 @@ public class PluginTest extends Specification {
         project.extensions.configure("nodejsSettings") {
            it.installNodeModules = true 
         }
-        project.tasks.create("nodeCli_less_lessc")
         then:
         project.tasks.findByName("nodeCli_less_lessc") != null
     }

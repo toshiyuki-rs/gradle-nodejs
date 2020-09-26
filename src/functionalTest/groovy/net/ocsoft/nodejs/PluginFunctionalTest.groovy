@@ -43,14 +43,13 @@ public class PluginFunctionalTest extends Specification {
     }
     nodejsSettings {
         installNodeModules = true
-        cliSettings {
-            nodeCli_less_lessc_1 {
-                args = ['--no-color', "${projectDir}/src/index.less",
-                    "${buildDir}/index.css"]
-            }
-        }
     }
 
+    tasks.findByName('nodeCli_less_lessc_1').configure {
+        args = ['--no-color', "${projectDir}/src/index.less",
+            "${buildDir}/index.css"] 
+    }
+    
     task lessc {
         dependsOn nodeCli_less_lessc_1
     }
@@ -87,16 +86,11 @@ body {
     plugins {
         id('net.ocsoft.nodejs')
     }
-    nodejsSettings {
-        installNodeModules = true
-        nodeSettings {
-            node_scriptTest {
-                args = ["'gradle-message'"]
-                nodeScript = "console.log(\\"got \\" + process.argv[2] +  \\"from build.gradle\\")"
-            }
-        }
+    tasks.findByName('node_scriptTest').configure {
+        args = ["'gradle-message'"]
+        nodeScript = "console.log(\\"got \\" + process.argv[2] +  \\"from build.gradle\\")"
     }
-
+ 
     task node_test_1 {
         dependsOn node_scriptTest
     }
@@ -110,7 +104,7 @@ body {
         def result = runner.build()
 
         then:
-        result.output.contains('got message \'gradle-message\'')
+        result.output.contains('got \'gradle-message\'')
     }
 
 

@@ -19,7 +19,7 @@ public class CommandSetting {
     /**
      * command line argument
      */
-    // private List<String> args
+    private List<String> args
 
 
     /**
@@ -40,40 +40,33 @@ public class CommandSetting {
     /**
      * get argments for command 
      */
-/*
     public List<String> getArgs() {
         return this.args
     }
-*/
     /**
      * set argments for command
      */
-/*
     public void setArgs(Collection<String> args) {
         this.args.clear()
         this.args.addAll(args) 
     }
-*/
     /**
      * adds arguments for command
      */
-/*
-    public args(String... args) {
+    public CommandSetting args(String... args) {
         this.args.addAll(this.args.size(), args)
         return this 
     }
-*/
     /**
      * adds argumets for command
      */
-/*    public args(Iterable<?> args) {
+    public CommandSetting args(Iterable<?> args) {
         def thisArgs = this.args
         args.forEach {
             thisArgs.add it
         } 
         return this
     }
-*/
 }
 
 // vi: se ts=4 sw=4 et:

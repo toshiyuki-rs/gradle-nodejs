@@ -18,21 +18,6 @@ public class NodeSetting {
 
 
     /**
-     * script
-     */
-    public File scriptPath
-
-    /**
-     *  script
-     */
-    private String nodeScript
-
-    /**
-     * options for node
-     */
-    private List<String> nodeArgs
-
-    /**
      * command line argument
      */
     private List<String> args
@@ -125,15 +110,18 @@ public class NodeSetting {
     }
 
     String[] getNodeArgsForCommand() {
-        String[] options = []
-        options.addAll(nodeArgs)
+        def options = []
+        options += nodeArgs
+        println "this.scriptPath: ${this.scriptPath}"
+        println "this.nodeScript: ${this.nodeScript}"
         if (havingScript) {
             def stdInOpt = nodeArgs.find { '-'.equals(it) } 
             if (stdInOpt == null) {
-                options.add('-')        
+                options += '-'       
             }
         }
-        return result
+        def result = options
+        return result 
     }
 
     public String getNodeScript() {

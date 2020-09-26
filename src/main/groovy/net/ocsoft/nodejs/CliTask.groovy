@@ -2,7 +2,11 @@ package net.ocsoft.nodejs
 
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.StopExecutionException
 import org.gradle.api.Project
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 
 /**
  * command line task
@@ -28,8 +32,7 @@ class CliTask extends AbstractExecTask<CliTask> {
      */
     static boolean registerTaskIfNot(Project project, String taskName) {
         def prefix = "${Constants.CLI_PREFIX}_"
-        def pos = taskName.indexOf(Constants.CLI_PREFIX) 
-        
+        def pos = taskName.indexOf(prefix) 
         def result = false
         if (pos == 0) {
             def moduleCommandName = taskName.substring(prefix.length()) 
@@ -59,26 +62,18 @@ class CliTask extends AbstractExecTask<CliTask> {
      */
     static boolean registerTask(Project project,
         String[] moduleCommand,  String taskName) {
-        def rootSettings = project.extensions.findByType(Settings.class)
-        def cliSetting = rootSettings.findCliSetting(taskName)
-        def moduleName
-        if (cliSetting != null && cliSetting.repository != null) {
-            moduleName = cliSetting.reposity 
-        } else {
-            moduleName = moduleCommand[0]
-        }
-        def exec = resolveExec(
-            moduleName, moduleCommand[1], 
-            project)
         def result = false
-        if (exec != null) {
-            project.tasks.create(taskName, CliTask) {
-                executable = exec
-            } 
-            result = true
-        }
+        project.tasks.create(taskName, CliTask)
+        result = true
         return result
     }
+
+    /**
+     * node module repository
+     */
+    @Optional
+    @InputFile
+    File repository 
 
     /**
      * constructor
@@ -87,18 +82,51 @@ class CliTask extends AbstractExecTask<CliTask> {
         super(CliTask)
     } 
 
-    void setupArgs() {
-        def settings = project.extensions.findByType(Settings.class)
-        def cliSettings = settings.cliSettings  
-        def cliSetting = cliSettings.findByName(name) 
-        if (cliSetting != null
-            && cliSettings.args != null) {
-            args = cliSettings.args
+    void setupExecutable() {
+
+        if (executable == null) {
+            def taskName = name
+            def moduleName
+            def prefix = "${Constants.CLI_PREFIX}_"
+            
+            def moduleCommandName = taskName.substring(prefix.length()) 
+            def elems  = moduleCommandName.split("_")
+            String[] moduleCommand
+            if (elems.length > 1) {
+                moduleCommand = [
+                    elems[0],
+                    elems[1]
+                ]
+            } else {
+                moduleCommand = [
+                    elems[0], 
+                    elems[0]
+                ]
+            }
+     
+            if (repository != null) {
+                moduleName = repository
+            } else {
+                moduleName = moduleCommand[0]
+            }
+            
+            def exec = resolveExec(
+                moduleName, moduleCommand[1], 
+                project)
+            if (exec != null) {
+                executable = exec
+            } else {
+                def message = "${taskName} is aborted for "
+                message += "not found ${moduleCommand[1]} in ${moduleName}."
+                println message 
+                throw new StopExecutionException(message)
+            }
         }
     }
+
     
     protected void exec() {
-        setupArgs() 
+        setupExecutable()
         super.exec()
     }
 }
