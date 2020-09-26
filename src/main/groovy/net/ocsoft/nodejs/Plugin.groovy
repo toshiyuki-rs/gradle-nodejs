@@ -15,31 +15,26 @@ public class Plugin implements org.gradle.api.Plugin<Project> {
     public void apply(Project project) {
         def settings = new Settings()
         project.extensions.add("nodejsSettings", settings)
-        project.tasks.addRule(
-            "${Constants.CLI_PREFIX}_<Module>_<Command>_<Id> Run node cli",
-            createCliRuleHandler(project))
-        project.tasks.addRule(
-            "${Constants.NODE_PREFIX}_<Id> Run node command",
-            createNodeRuleHandler(project))
-    }
+        project.extensions.add("nodejsResolver", new Resolver(project))
+        def modulesTask = project.tasks.create("nodejsModules", NodeModules)
+        project.extensions.add("nodejsModules", modulesTask)
+         
 
-    /**
-     * cli rule handler
-     */
-    Closure createCliRuleHandler(Project project) {
-        return {
+        project.tasks.addRule(
+            "${Constants.CLI_PREFIX}_<Module>_<Command>_<Id> Run node cli") {
             CliTask.registerTaskIfNot(project, it)
         }
-    }
-
-    /**
-     * node rule handler
-     */
-    Closure createNodeRuleHandler(Project project) {
-        return {
+        project.tasks.addRule(
+            "${Constants.NODE_PREFIX}_<Id> Run node command") {
             NodeTask.registerTaskIfNot(project, it)
         }
+        project.tasks.addRule(
+            "${Constants.NPM_PREFIX}_<Command>_<Id> Run node command") {
+            NpmTask.registerTaskIfNot(project, it)
+        }
     }
+
+
 }
 
 // vi: se ts=4 sw=4 et:

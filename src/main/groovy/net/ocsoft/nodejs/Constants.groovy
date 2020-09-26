@@ -13,7 +13,11 @@ class Constants {
      * node prefix
      */
     final static String NODE_PREFIX = "node"
- 
+    /**
+     * npm prefix
+     */
+    final static String NPM_PREFIX = "npm"
+  
 }
 
 

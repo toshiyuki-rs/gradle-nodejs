@@ -1,8 +1,13 @@
 package net.ocsoft.nodejs
 
 import org.gradle.api.Project
+import java.lang.ref.WeakReference
+import org.gradle.api.DefaultTask
+import org.gradle.api.Action
+import org.gradle.api.Task
+import org.gradle.api.tasks.TaskAction
 
-public class NodeModules {
+public class NodeModules extends DefaultTask {
 
     /**
      * create directory list
@@ -34,9 +39,11 @@ public class NodeModules {
         for (dir in directories) {
             def modDir = new File(dir, "node_modules")
             if (modDir.directory) {
-                if (closure(modDir)) {
+                if (closure != null && closure(modDir)) {
                     result = modDir
                     break
+                } else {
+                    result = modDir
                 }
             }
         }
@@ -75,6 +82,77 @@ public class NodeModules {
             }
         }
         return result 
+    }
+
+    /**
+     * node modules
+     */
+    private List<Object> modules
+
+    
+    /**
+     * constructor
+     */
+    NodeModules() {
+        modules = []
+    }
+
+   
+    /**
+     * register instal module
+     */
+    void install(String module) {
+        modules += module
+    }
+
+    /**
+     * register install module
+     */
+    void install(File module) {
+        modules += module
+    }
+
+    /**
+     * run tasks
+     */
+    @TaskAction
+    void run() {
+        installAll()
+    }
+
+    /**
+     * do install all npm modules
+     */
+    private void installAll() {
+        def project = this.project
+        if (project != null) { 
+            def resolver = project.extensions.nodejsResolver
+            def settings = project.extensions.nodejsSettings
+
+    
+            def moduleDir = resolver.resolveNodeModule()
+            if (moduleDir == null) {
+                if (settings.installNodeModules) {
+                    moduleDir = resolver.initNodeModuleIfNot()
+                }
+            }
+
+            if (moduleDir != null) { 
+                System.err.println modules
+                modules.forEach {
+                    def module = it
+
+                    def res = project.exec {
+                        executable = "npm"
+                        args "install", "${module}"
+                        workingDir = moduleDir
+                        System.err.println commandLine
+                    } 
+                    System.err.println(res.exitValue)
+                    // res.assertNormalExitValue() 
+                } 
+            }
+        }
     }
 }
 
