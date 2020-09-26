@@ -26,9 +26,9 @@ class NodeModulesTest extends Specification {
         project.apply {
             plugin(Plugin.class)
         }
-        project.extensions.findByName("nodejsSettings").installNodeModules = true
+        project.extensions.nodejsSettings.installNodeModules = true
        
-        project.extensions.findByName("nodejsModules").configure {
+        project.extensions.nodejsModules.configure {
             install "yaml"
         }
         
@@ -40,13 +40,13 @@ class NodeModulesTest extends Specification {
     console.log(yaml.parse('hello world')) 
 '''
         }
-        project.tasks.findByName('nodejsModules').actions.forEach {
-            it.execute project.tasks.findByName('nodejsModules')
+        project.tasks.nodejsModules.actions.forEach {
+            it.execute project.tasks.nodejsModules
         }
 
          
-        project.tasks.findByName('node_scriptTest').actions.forEach {
-            it.execute project.tasks.findByName('node_scriptTest')
+        project.tasks.node_scriptTest.actions.forEach {
+            it.execute project.tasks.node_scriptTest
         }
         then:
         buffer.toString().contains('hello world') 
