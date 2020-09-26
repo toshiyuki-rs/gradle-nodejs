@@ -138,7 +138,6 @@ public class NodeModules extends DefaultTask {
             }
 
             if (moduleDir != null) { 
-                System.err.println modules
                 modules.forEach {
                     def module = it
 
@@ -146,10 +145,7 @@ public class NodeModules extends DefaultTask {
                         executable = "npm"
                         args "install", "${module}"
                         workingDir = moduleDir
-                        System.err.println commandLine
                     } 
-                    System.err.println(res.exitValue)
-                    // res.assertNormalExitValue() 
                 } 
             }
         }

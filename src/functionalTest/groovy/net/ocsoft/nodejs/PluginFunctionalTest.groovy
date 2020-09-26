@@ -107,7 +107,45 @@ body {
         result.output.contains('got \'gradle-message\'')
     }
 
+     def "can run node task with depend"() {
+        given:
+        def projectDir = new File("build/functionalTest/node-run-2")
+        projectDir.mkdirs()
+        new File(projectDir, "settings.gradle").text = ""
+        new File(projectDir, "build.gradle").text = '''
+    plugins {
+        id('net.ocsoft.nodejs')
+    }
+    nodejsSettings {
+        installNodeModules = true
+    }
+    tasks.nodejsModules.configure {
+        install 'yaml'
+        println "configured"
+    }
 
+    tasks.findByName('node_scriptTest').configure {
+        nodeScript = ["const yaml = require('yaml')",
+            "console.log(yaml.parse('yaml-gradle-test'))"].join(\"\\n\")
+        dependsOn tasks.nodejsModules
+    }
+    task node_test_1 {
+        dependsOn node_scriptTest
+    }
+'''
+        when:
+        def runner = GradleRunner.create()
+        runner.forwardOutput()
+        runner.withPluginClasspath()
+        runner.withArguments(["node_test_1"])
+        runner.withProjectDir(projectDir)
+        def result = runner.build()
+
+        then:
+        result.output.contains('yaml-gradle-test')
+    }
+
+   
 
 }
 // vi: se ts=4 sw=4 et:
