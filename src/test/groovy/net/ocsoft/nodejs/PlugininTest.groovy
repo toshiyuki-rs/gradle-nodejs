@@ -8,7 +8,7 @@ import org.gradle.api.Project
 import spock.lang.Specification
 
 /**
- * A simple unit test for the 'gradle.nodejs.greeting' plugin.
+ * A unit test for the 'net.ocsoft.nodejs' plugin.
  */
 public class PluginTest extends Specification {
     def "plugin registers task"() {

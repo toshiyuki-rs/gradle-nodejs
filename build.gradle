@@ -20,6 +20,9 @@ repositories {
     jcenter()
 }
 
+version = "0.1"
+group = "net.ocsoft"
+
 dependencies {
     // Use the awesome Spock testing and specification framework
     testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
@@ -28,9 +31,21 @@ dependencies {
 gradlePlugin {
     // Define the plugin
     plugins {
-        greeting {
+        nodejs {
             id = 'net.ocsoft.nodejs'
             implementationClass = 'net.ocsoft.nodejs.Plugin'
+        }
+    }
+}
+
+pluginBudle {
+    website = 'https://oc-soft.net'
+    vcsUrl = 'https://github.com/toshiyuki-rs/gradle-nodejs.git'
+    description = 'yet another nodejs plugin for gradle'
+    tags = ['node', 'npm', 'Node.js', 'javascript']
+    plugins {
+        nodejs {
+            displayName = 'Node.js plugin for gradle'
         }
     }
 }
@@ -54,3 +69,5 @@ check {
     // Run the functional tests as part of `check`
     dependsOn(tasks.functionalTest)
 }
+
+// vi: se ts=4 sw=4 et:

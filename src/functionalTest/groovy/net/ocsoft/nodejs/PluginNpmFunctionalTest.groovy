@@ -7,7 +7,7 @@ import spock.lang.Specification
 import org.gradle.testkit.runner.GradleRunner
 
 /**
- * A simple functional test for the 'gradle.nodejs.greeting' plugin.
+ * A functional test for the 'net.ocsoft.nodejs' plugin.
  */
 public class PluginNpmFunctionalTest extends Specification {
     def "can npm run"() {
