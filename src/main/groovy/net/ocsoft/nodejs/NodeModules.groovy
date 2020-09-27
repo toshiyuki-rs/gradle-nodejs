@@ -131,20 +131,23 @@ public class NodeModules extends DefaultTask {
 
     
             def moduleDir = resolver.resolveNodeModule()
+            def moduleParent = null
             if (moduleDir == null) {
                 if (settings.installNodeModules) {
-                    moduleDir = resolver.initNodeModuleIfNot()
+                    moduleParent = resolver.initNodeModuleIfNot()
                 }
+            } else {
+                moduleParent = moduleDir.parentFile
             }
 
-            if (moduleDir != null) { 
+            if (moduleParent != null) { 
                 modules.forEach {
                     def module = it
-
+                
                     def res = project.exec {
                         executable = "npm"
                         args "install", "${module}"
-                        workingDir = moduleDir
+                        workingDir = moduleParent
                     } 
                 } 
             }
