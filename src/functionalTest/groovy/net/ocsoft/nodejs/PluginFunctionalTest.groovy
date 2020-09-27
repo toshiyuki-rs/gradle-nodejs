@@ -10,7 +10,7 @@ import org.gradle.testkit.runner.GradleRunner
  * A simple functional test for the 'gradle.nodejs.greeting' plugin.
  */
 public class PluginFunctionalTest extends Specification {
-    def "can nodeCli task be registered"() {
+    def "is nodeCli task registered"() {
         given:
         def projectDir = new File("build/functionalTest/registration")
         projectDir.mkdirs()
@@ -121,7 +121,6 @@ body {
     }
     tasks.nodejsModules.configure {
         install 'yaml'
-        println "configured"
     }
 
     tasks.findByName('node_scriptTest').configure {
