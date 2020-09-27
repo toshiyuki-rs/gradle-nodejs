@@ -19,8 +19,8 @@ public class PackageJson {
             project.exec {
                 executable = 'npm'
                 args = ['init', '-y']
-                if (moduleParent != null) {
-                    workingDir = moduleParent
+                if (packParent != null) {
+                    workingDir = packParent
                 }
             }
             if (packJson.exists()) {

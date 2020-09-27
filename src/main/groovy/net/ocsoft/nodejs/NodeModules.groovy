@@ -128,7 +128,6 @@ public class NodeModules extends DefaultTask {
         if (project != null) { 
             def resolver = project.extensions.nodejsResolver
             def settings = project.extensions.nodejsSettings
-
     
             def moduleDir = resolver.resolveNodeModule()
             def moduleParent = null
@@ -139,11 +138,10 @@ public class NodeModules extends DefaultTask {
             } else {
                 moduleParent = moduleDir.parentFile
             }
-
             if (moduleParent != null) { 
+
                 modules.forEach {
                     def module = it
-                
                     def res = project.exec {
                         executable = "npm"
                         args "install", "${module}"
