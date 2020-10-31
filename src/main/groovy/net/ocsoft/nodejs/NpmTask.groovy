@@ -72,7 +72,7 @@ class NpmTask extends AbstractExecTask<NpmTask> {
         if (command == null) { 
             def prefix = "${Constants.NPM_PREFIX}_"
             def pos = name.indexOf(prefix)
-            commandAndId = name.substring(pos).split('_')
+            def commandAndId = name.substring(pos).split('_')
             result = commandAndId[0]
         } else {
             result = command
